@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Financeiro - Anna (Pessoal)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        input[type="date"]::-webkit-calendar-picker-indicator,
+        input[type="month"]::-webkit-calendar-picker-indicator { opacity: 0.6; cursor: pointer; }
+        .paid-item { text-decoration: line-through; opacity: 0.6; }
+        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-scroll::-webkit-scrollbar-track { background: #f5f5f4; } /* stone-100 */
+        .custom-scroll::-webkit-scrollbar-thumb { background: #d6d3d1; border-radius: 10px; } /* stone-300 */
+        
+        /* Estilos da Calculadora */
+        #calc-widget { transition: transform 0.3s ease-in-out; z-index: 50; }
+        .calc-btn { @apply bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-2 rounded transition-colors; }
+        .calc-btn-op { @apply bg-amber-700 hover:bg-amber-800 text-white font-bold py-2 rounded; }
+        .sort-btn { @apply text-[10px] font-bold px-2 py-0.5 rounded border border-stone-200 hover:bg-stone-100 transition text-stone-500 uppercase flex items-center gap-1; }
+    </style>
+</head>
+<body class="bg-stone-50 text-stone-800 pb-20">
+
+    <div class="container mx-auto max-w-6xl p-4 sm:p-6">
+        
+        <header class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 bg-white p-6 rounded-3xl shadow-sm border border-stone-200">
+            <div class="text-center md:text-left flex items-center gap-4">
+                <div class="w-14 h-14 bg-amber-100 rounded-full flex items-center justify-center text-2xl shadow-inner">🪴</div>
+                <div>
+                    <h1 class="text-3xl font-black text-stone-900 tracking-tight">Painel <span class="text-amber-700">Financeiro</span></h1>
+                    <p class="text-amber-600 font-medium text-sm">Gestão Pessoal - Anna</p>
+                </div>
+            </div>
+            <div class="flex gap-2 flex-wrap justify-center">
+                <div class="bg-stone-100 p-1 rounded-xl border border-stone-200 flex items-center mr-4">
+                    <span class="px-3 text-[10px] font-bold text-stone-500 uppercase">Mês:</span>
+                    <input type="month" id="monthFilter" class="border-none bg-transparent focus:ring-0 font-bold text-stone-800 p-2 text-sm outline-none">
+                </div>
+                <button onclick="exportData()" class="bg-white border border-stone-300 text-stone-600 px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 hover:bg-stone-100 transition shadow-sm">
+                    💾 Backup
+                </button>
+                <button onclick="toggleCalc()" class="bg-amber-700 text-white px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 hover:bg-amber-800 transition shadow-md">
+                    ➕ Calc
+                </button>
+            </div>
+        </header>
+
+        <main class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <!-- Coluna 1: Renda e Entradas -->
+            <div class="lg:col-span-1 space-y-6">
+                
+                <!-- Renda Mensal (Dinâmica) -->
+                <section class="bg-white p-6 rounded-3xl shadow-sm border border-stone-200 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-1.5 h-full bg-green-600"></div>
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h2 class="text-lg font-bold text-stone-800">Minhas Entradas</h2>
+                            <span class="text-[10px] bg-green-50 text-green-700 px-2 py-1 rounded-full uppercase font-bold">Renda</span>
+                        </div>
+                        <button onclick="toggleSort('rendas')" class="sort-btn" id="btn-sort-rendas"><span>⇅</span> Valor</button>
+                    </div>
+                    <form id="renda-form" class="space-y-3 mb-4">
+                        <input type="text" id="renda-name" placeholder="Ex: Procedimentos, Venda, Diárias" class="w-full border-stone-200 rounded-xl text-sm border p-3 focus:border-green-500" required>
+                        <div class="flex gap-2">
+                            <input type="text" id="renda-value" placeholder="R$ 0,00" class="currency-input flex-grow border-stone-200 rounded-xl text-sm border p-3 font-bold text-green-700 focus:border-green-500" required>
+                            <button type="submit" class="bg-green-600 text-white font-black py-2 px-6 rounded-xl hover:bg-green-700 transition">+</button>
+                        </div>
+                    </form>
+                    <div id="renda-list" class="space-y-2 max-h-40 overflow-y-auto pr-1 custom-scroll"></div>
+                </section>
+
+                <!-- Devedores / A Receber -->
+                <section class="bg-white p-6 rounded-3xl shadow-sm border border-stone-200 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-1.5 h-full bg-teal-500"></div>
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h2 class="text-lg font-bold text-stone-800">A Receber</h2>
+                            <span class="text-[10px] bg-teal-50 text-teal-600 px-2 py-1 rounded-full uppercase font-bold">Devedores / Reembolsos</span>
+                        </div>
+                        <button onclick="toggleSort('aportes')" class="sort-btn" id="btn-sort-aportes"><span>⇅</span> Valor</button>
+                    </div>
+                    <form id="aporte-form" class="space-y-3 mb-4">
+                        <input type="text" id="aporte-name" placeholder="Quem está devendo?" class="w-full border-stone-200 rounded-xl text-sm border p-3 focus:border-teal-500" required>
+                        <div class="flex gap-2">
+                            <input type="text" id="aporte-value" placeholder="R$ 0,00" class="currency-input flex-grow border-stone-200 rounded-xl text-sm border p-3 font-bold text-teal-700 focus:border-teal-500" required>
+                            <button type="submit" class="bg-teal-600 text-white font-black py-2 px-6 rounded-xl hover:bg-teal-700 transition">+</button>
+                        </div>
+                    </form>
+                    <div id="aporte-list" class="space-y-2 max-h-40 overflow-y-auto pr-1 custom-scroll"></div>
+                </section>
+
+                <!-- Contas Fixas -->
+                <section class="bg-white p-6 rounded-3xl shadow-sm border border-stone-200 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-1.5 h-full bg-rose-500"></div>
+                    <div class="flex justify-between items-start mb-4">
+                        <h2 class="text-lg font-bold text-stone-800">Contas Fixas</h2>
+                        <button onclick="toggleSort('contas')" class="sort-btn" id="btn-sort-contas"><span>⇅</span> Valor</button>
+                    </div>
+                     <form id="bill-form" class="space-y-3 mb-4">
+                        <input type="text" id="bill-name" placeholder="Ex: Internet, Cartão" class="w-full border-stone-200 rounded-xl text-sm border p-3 focus:border-rose-400" required>
+                        <div class="flex gap-2">
+                            <input type="text" id="bill-value" placeholder="R$ 0,00" class="currency-input flex-grow border-stone-200 rounded-xl text-sm border p-3 font-bold text-rose-600 focus:border-rose-400" required>
+                            <button type="submit" class="bg-rose-500 text-white font-black py-2 px-6 rounded-xl hover:bg-rose-600 transition">+</button>
+                        </div>
+                    </form>
+                    <div id="bill-list" class="space-y-3 max-h-60 overflow-y-auto pr-1 custom-scroll"></div>
+                </section>
+            </div>
+
+            <!-- Coluna 2: Lançamentos Variáveis e Previstos -->
+            <div class="lg:col-span-1 space-y-6">
+                
+                <!-- Adicionar Despesa -->
+                <section class="bg-white p-6 rounded-3xl shadow-sm border border-stone-200 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-1.5 h-full bg-orange-500"></div>
+                    <h2 class="text-lg font-bold text-stone-800 mb-4">Nova Despesa</h2>
+                    <form id="expense-form" class="space-y-4">
+                        <div>
+                            <input type="text" id="expense-desc" class="w-full border-stone-200 rounded-xl border p-3 text-sm focus:border-orange-400" placeholder="O que você pagou/comprou?" required>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <input type="date" id="expense-date" class="w-full border-stone-200 rounded-xl border p-3 text-sm focus:border-orange-400" required>
+                            </div>
+                            <div>
+                                <input type="text" id="expense-value" class="currency-input w-full border-stone-200 rounded-xl border p-3 font-black text-orange-600 focus:border-orange-400" placeholder="R$ 0,00" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full bg-orange-500 text-white font-black py-3 px-4 rounded-xl hover:bg-orange-600 transition shadow-md shadow-orange-200">Registrar no Caixa</button>
+                    </form>
+                </section>
+
+                <!-- Histórico de Despesas -->
+                <section class="bg-white p-6 rounded-3xl shadow-sm border border-stone-200">
+                     <div class="flex justify-between items-center mb-4 border-b border-stone-100 pb-3">
+                        <h2 class="text-[10px] font-black uppercase tracking-widest text-stone-400">Extrato de Saídas</h2>
+                        <button onclick="toggleSort('despesas')" class="sort-btn" id="btn-sort-despesas"><span>⇅</span> Valor</button>
+                     </div>
+                     <div id="expense-list" class="space-y-3 max-h-[250px] overflow-y-auto pr-2 custom-scroll text-sm">
+                         <p class="text-center text-stone-400 py-4 italic text-xs">Nenhum gasto registrado.</p>
+                     </div>
+                </section>
+
+                <!-- Gastos Previstos -->
+                <section class="bg-white p-6 rounded-3xl shadow-sm border border-stone-200 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-1.5 h-full bg-amber-500"></div>
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h2 class="text-lg font-bold text-stone-800">Gastos Previstos</h2>
+                            <span class="text-[10px] bg-amber-50 text-amber-600 px-2 py-1 rounded-full uppercase font-bold">Planejamento</span>
+                        </div>
+                    </div>
+                    <form id="previsto-form" class="space-y-3 mb-4">
+                        <input type="text" id="previsto-name" placeholder="Ex: Lanche, Roupa..." class="w-full border-stone-200 rounded-xl text-sm border p-3 focus:border-amber-400" required>
+                        <div class="flex gap-2">
+                            <input type="text" id="previsto-value" placeholder="R$ 0,00" class="currency-input flex-grow border-stone-200 rounded-xl text-sm border p-3 font-bold text-amber-700 focus:border-amber-400" required>
+                            <button type="submit" class="bg-amber-500 text-white font-black py-2 px-6 rounded-xl hover:bg-amber-600 transition">+</button>
+                        </div>
+                    </form>
+                    <div id="previsto-list" class="space-y-2 max-h-40 overflow-y-auto pr-1 custom-scroll"></div>
+                </section>
+            </div>
+
+            <!-- Coluna 3: Resumo Financeiro -->
+            <div class="lg:col-span-1 space-y-6">
+                <section class="bg-stone-900 p-6 rounded-[2rem] shadow-xl sticky top-6 text-white border-b-8 border-stone-700">
+                    <h2 class="text-xl font-black mb-6 text-center text-amber-100 tracking-tight">Visão Geral do Caixa</h2>
+                    
+                    <div class="space-y-4">
+                        
+                        <div class="bg-stone-800/50 p-4 rounded-2xl border border-stone-700 space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs text-stone-300">Renda Confirmada</span>
+                                <span id="resumo-renda-recebida" class="font-bold text-green-400">R$ 0,00</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs text-stone-300">A Receber / Reembolsos</span>
+                                <span id="resumo-aportes" class="font-bold text-teal-400">R$ 0,00</span>
+                            </div>
+                            <div class="h-px w-full bg-stone-700 my-1"></div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs text-stone-300">Contas Fixas Pagas</span>
+                                <span id="resumo-pagas" class="font-bold text-rose-400">R$ 0,00</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs text-stone-300">Gastos Variáveis</span>
+                                <span id="resumo-despesas" class="font-bold text-orange-400">R$ 0,00</span>
+                            </div>
+                            <div class="flex justify-between items-center border-t border-dashed border-stone-700 pt-3">
+                                <span class="text-xs text-amber-300">Previstos (Ainda Pendentes)</span>
+                                <span id="resumo-previstos" class="font-bold text-amber-300">R$ 0,00</span>
+                            </div>
+                        </div>
+
+                        <div class="pt-2">
+                            <div class="flex justify-between items-center p-3 bg-black/20 rounded-xl mb-3">
+                                <span class="text-xs text-amber-100">Saldo de Meses Anteriores</span>
+                                <span id="resumo-saldo-anterior" class="font-black text-amber-100">R$ 0,00</span>
+                            </div>
+
+                             <div class="bg-white/10 p-5 rounded-2xl text-center border border-white/10 backdrop-blur-sm shadow-inner">
+                                <p class="text-[10px] font-bold uppercase opacity-80 mb-1 tracking-widest text-amber-100">Dinheiro em Caixa Hoje</p>
+                                <p id="sobra-display" class="text-4xl font-black text-white drop-shadow-md">R$ 0,00</p>
+                                <p class="text-[9px] mt-3 opacity-50 leading-tight">* Saldo Anterior + (Entradas - Saídas - Previstos Pagos)</p>
+                            </div>
+
+                            <div class="mt-3 bg-gradient-to-r from-amber-700 to-orange-600 p-4 rounded-2xl text-center shadow-lg">
+                                <p class="text-[9px] font-bold uppercase text-amber-100 mb-1 tracking-widest">Livre p/ Gastar (Projeção)</p>
+                                <p id="projecao-display" class="text-2xl font-black text-white">R$ 0,00</p>
+                                <p class="text-[9px] mt-1 opacity-80 leading-tight">* Caixa Hoje - Gastos Previstos Pendentes</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- WIDGET CALCULADORA -->
+    <div id="calc-widget" class="fixed bottom-6 right-6 w-64 bg-white rounded-3xl shadow-2xl border border-stone-200 hidden transform overflow-hidden">
+        <div class="bg-stone-800 text-white p-4 flex justify-between items-center">
+            <span class="text-xs font-black uppercase tracking-widest">Calculadora</span>
+            <button onclick="toggleCalc()" class="hover:bg-stone-700 rounded px-2 font-bold">&times;</button>
+        </div>
+        <div class="p-5">
+            <input type="text" id="calc-display" class="w-full text-right text-3xl font-mono bg-stone-50 border-none p-3 mb-4 rounded-xl focus:ring-0 text-stone-700" readonly value="0">
+            <div class="grid grid-cols-4 gap-2">
+                <button onclick="calcClear()" class="calc-btn bg-rose-50 text-rose-500 hover:bg-rose-100">C</button>
+                <button onclick="calcOp('/')" class="calc-btn-op">÷</button>
+                <button onclick="calcOp('*')" class="calc-btn-op">×</button>
+                <button onclick="calcDelete()" class="calc-btn text-lg">←</button>
+                
+                <button onclick="calcNum('7')" class="calc-btn">7</button>
+                <button onclick="calcNum('8')" class="calc-btn">8</button>
+                <button onclick="calcNum('9')" class="calc-btn">9</button>
+                <button onclick="calcOp('-')" class="calc-btn-op">-</button>
+                
+                <button onclick="calcNum('4')" class="calc-btn">4</button>
+                <button onclick="calcNum('5')" class="calc-btn">5</button>
+                <button onclick="calcNum('6')" class="calc-btn">6</button>
+                <button onclick="calcOp('+')" class="calc-btn-op">+</button>
+                
+                <button onclick="calcNum('1')" class="calc-btn">1</button>
+                <button onclick="calcNum('2')" class="calc-btn">2</button>
+                <button onclick="calcNum('3')" class="calc-btn">3</button>
+                <button onclick="calcEqual()" class="calc-btn-op row-span-2 bg-amber-600 hover:bg-amber-700 text-xl">=</button>
+                
+                <button onclick="calcNum('0')" class="calc-btn col-span-2">0</button>
+                <button onclick="calcNum('.')" class="calc-btn font-bold">.</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // ESTADO DE ORDENAÇÃO
+    let sorts = {
+        rendas: 'status',
+        contas: 'status',
+        despesas: 'date',
+        aportes: 'status'
+    };
+
+    // ELEMENTOS DO DOM
+    const monthFilter = document.getElementById('monthFilter');
+    
+    // Rendas
+    const rendaForm = document.getElementById('renda-form');
+    const rendaNameInput = document.getElementById('renda-name');
+    const rendaValueInput = document.getElementById('renda-value');
+    const rendaListEl = document.getElementById('renda-list');
+
+    // A Receber (Aportes)
+    const aporteForm = document.getElementById('aporte-form');
+    const aporteNameInput = document.getElementById('aporte-name');
+    const aporteValueInput = document.getElementById('aporte-value');
+    const aporteListEl = document.getElementById('aporte-list');
+
+    // Contas
+    const billForm = document.getElementById('bill-form');
+    const billNameInput = document.getElementById('bill-name');
+    const billValueInput = document.getElementById('bill-value');
+    const billListEl = document.getElementById('bill-list');
+
+    // Despesas Variáveis
+    const expenseForm = document.getElementById('expense-form');
+    const expenseDescInput = document.getElementById('expense-desc');
+    const expenseValueInput = document.getElementById('expense-value');
+    const expenseDateInput = document.getElementById('expense-date');
+    const expenseListEl = document.getElementById('expense-list');
+
+    // Previstos
+    const previstoForm = document.getElementById('previsto-form');
+    const previstoNameInput = document.getElementById('previsto-name');
+    const previstoValueInput = document.getElementById('previsto-value');
+    const previstoListEl = document.getElementById('previsto-list');
+
+    // Resumo
+    const resumoSaldoAnterior = document.getElementById('resumo-saldo-anterior');
+    const resumoRendaRecebida = document.getElementById('resumo-renda-recebida');
+    const resumoAportes = document.getElementById('resumo-aportes');
+    const resumoPagas = document.getElementById('resumo-pagas');
+    const resumoDespesas = document.getElementById('resumo-despesas');
+    const resumoPrevistos = document.getElementById('resumo-previstos');
+    const sobraDisplay = document.getElementById('sobra-display');
+    const projecaoDisplay = document.getElementById('projecao-display');
+
+    // FUNÇÕES UTILITÁRIAS
+    const formatCurrency = (v) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    const getStorageKey = (base) => `anna_pessoal_${base}_${monthFilter.value}`;
+    
+    const parseValue = (v) => {
+        if (!v) return 0;
+        const numeric = v.toString().replace(/\D/g, '');
+        return parseFloat(numeric) / 100 || 0;
+    };
+
+    const setupCurrencyMask = (input) => {
+        input.addEventListener('input', (e) => {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value === "") { e.target.value = ""; return; }
+            const floatValue = parseFloat(value) / 100;
+            e.target.value = floatValue.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+        });
+    };
+
+    document.querySelectorAll('.currency-input').forEach(setupCurrencyMask);
+
+    // PERSISTÊNCIA (Isolada para a Anna Pessoal)
+    const loadData = () => {
+        const rendas = JSON.parse(localStorage.getItem(getStorageKey('rendas'))) || [];
+        const aportes = JSON.parse(localStorage.getItem(getStorageKey('aportes'))) || [];
+        const despesas = JSON.parse(localStorage.getItem(getStorageKey('despesas'))) || [];
+        const previstos = JSON.parse(localStorage.getItem(getStorageKey('previstos'))) || [];
+        const contas = JSON.parse(localStorage.getItem(getStorageKey('contas'))) || [];
+        return { rendas, aportes, contas, despesas, previstos };
+    };
+
+    // Histórico de saldo
+    const getCumulativePreviousBalance = (currentMonthStr) => {
+        let balance = 0;
+        const allKeys = Object.keys(localStorage);
+        const monthKeys = new Set();
+        allKeys.forEach(k => {
+            const match = k.match(/anna_pessoal_.*_(\d{4}-\d{2})/);
+            if (match) monthKeys.add(match[1]);
+        });
+
+        const sortedMonths = Array.from(monthKeys).sort();
+        
+        for (const m of sortedMonths) {
+            if (m >= currentMonthStr) continue;
+
+            const rendas = JSON.parse(localStorage.getItem(`anna_pessoal_rendas_${m}`)) || [];
+            const aportes = JSON.parse(localStorage.getItem(`anna_pessoal_aportes_${m}`)) || [];
+            const contas = JSON.parse(localStorage.getItem(`anna_pessoal_contas_${m}`)) || [];
+            const despesas = JSON.parse(localStorage.getItem(`anna_pessoal_despesas_${m}`)) || [];
+            const previstos = JSON.parse(localStorage.getItem(`anna_pessoal_previstos_${m}`)) || [];
+
+            const recRenda = rendas.filter(r => r.paid).reduce((acc, r) => acc + r.value, 0);
+            const recAportes = aportes.filter(a => a.paid).reduce((acc, a) => acc + a.value, 0);
+            const pagContas = contas.filter(c => c.paid).reduce((acc, c) => acc + c.value, 0);
+            const pagDespesas = despesas.reduce((acc, d) => acc + d.value, 0);
+            const pagPrevistos = previstos.filter(p => p.paid).reduce((acc, p) => acc + p.value, 0);
+
+            balance += (recRenda + recAportes) - pagContas - pagDespesas - pagPrevistos;
+        }
+        return balance;
+    };
+
+    const saveData = (data) => {
+        localStorage.setItem(getStorageKey('rendas'), JSON.stringify(data.rendas));
+        localStorage.setItem(getStorageKey('aportes'), JSON.stringify(data.aportes));
+        localStorage.setItem(getStorageKey('contas'), JSON.stringify(data.contas));
+        localStorage.setItem(getStorageKey('despesas'), JSON.stringify(data.despesas));
+        localStorage.setItem(getStorageKey('previstos'), JSON.stringify(data.previstos));
+    };
+
+    // ORDENAÇÃO
+    window.toggleSort = (target) => {
+        if (target === 'despesas') sorts.despesas = sorts.despesas === 'date' ? 'value' : 'date';
+        else sorts[target] = sorts[target] === 'status' ? 'value' : 'status';
+        updateUI();
+    };
+
+    // RENDERIZAÇÃO E CÁLCULOS
+    function updateUI() {
+        const { rendas, aportes, contas, despesas, previstos } = loadData();
+
+        // Rendas (Dinâmico)
+        rendaListEl.innerHTML = '';
+        let totalRendaRecebida = 0;
+
+        const sortedRendas = [...rendas].sort((a, b) => {
+            if (sorts.rendas === 'status') return a.paid - b.paid || b.value - a.value;
+            return b.value - a.value;
+        });
+
+        if (sortedRendas.length === 0) {
+            rendaListEl.innerHTML = '<p class="text-[10px] text-stone-400 italic text-center py-2">Nenhuma entrada cadastrada.</p>';
+        } else {
+            sortedRendas.forEach(r => {
+                if (r.paid) totalRendaRecebida += r.value;
+                const div = document.createElement('div');
+                div.className = `flex justify-between items-center p-3 rounded-xl border text-sm ${r.paid ? 'bg-green-50/50 border-green-100 opacity-60' : 'bg-stone-50 border-stone-100'}`;
+                div.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <input type="checkbox" ${r.paid ? 'checked' : ''} onchange="toggleRenda(${r.id})" class="h-5 w-5 rounded text-green-500 focus:ring-green-500 border-stone-300">
+                        <span class="${r.paid ? 'paid-item text-stone-400' : 'font-bold text-stone-700'}">${r.name}</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="font-bold ${r.paid ? 'text-stone-400' : 'text-stone-900'}">${formatCurrency(r.value)}</span>
+                        <button onclick="deleteRenda(${r.id})" class="text-stone-300 hover:text-red-500 font-black">&times;</button>
+                    </div>
+                `;
+                rendaListEl.appendChild(div);
+            });
+        }
+
+        // Aportes (A Receber)
+        aporteListEl.innerHTML = '';
+        let totalAportesPagos = 0;
+        
+        const sortedAportes = [...aportes].sort((a, b) => {
+            if (sorts.aportes === 'status') return a.paid - b.paid || b.value - a.value;
+            return b.value - a.value;
+        });
+
+        if (sortedAportes.length === 0) {
+            aporteListEl.innerHTML = '<p class="text-[10px] text-stone-400 italic text-center py-2">Ninguém devendo no momento.</p>';
+        } else {
+            sortedAportes.forEach(a => {
+                if (a.paid) totalAportesPagos += a.value;
+                const div = document.createElement('div');
+                div.className = `flex justify-between items-center text-xs p-3 rounded-xl border ${a.paid ? 'bg-teal-50/50 border-teal-100 opacity-60' : 'bg-stone-50 border-stone-200'}`;
+                div.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <input type="checkbox" ${a.paid ? 'checked' : ''} onchange="toggleAporte(${a.id})" class="h-5 w-5 rounded text-teal-600 focus:ring-teal-500 border-stone-300">
+                        <div class="${a.paid ? 'paid-item' : 'text-stone-700 font-bold'}">
+                            <p class="text-[11px]">${a.name}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <p class="text-[12px] font-black ${a.paid ? 'text-teal-600' : 'text-stone-900'}">${formatCurrency(a.value)}</p>
+                        <button onclick="deleteAporte(${a.id})" class="text-stone-300 hover:text-red-500 text-lg">&times;</button>
+                    </div>
+                `;
+                aporteListEl.appendChild(div);
+            });
+        }
+
+        // Despesas Variáveis
+        expenseListEl.innerHTML = '';
+        let totalDespesas = 0;
+
+        const sortedDespesas = [...despesas].sort((a, b) => sorts.despesas === 'value' ? b.value - a.value : new Date(b.date) - new Date(a.date));
+
+        if (sortedDespesas.length === 0) {
+            expenseListEl.innerHTML = '<p class="text-center text-stone-400 py-4 text-xs italic">Sem gastos registrados.</p>';
+        } else {
+            sortedDespesas.forEach(d => {
+                totalDespesas += d.value;
+                const item = document.createElement('div');
+                item.className = 'group flex justify-between items-center bg-stone-50 p-3 rounded-xl border border-stone-100 hover:border-orange-200 transition';
+                item.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center text-sm border border-stone-100">🛒</div>
+                        <div>
+                            <p class="font-bold text-stone-700 text-sm">${d.desc}</p>
+                            <p class="text-[9px] font-black uppercase tracking-wider text-stone-400">${new Date(d.date + 'T12:00:00').toLocaleDateString('pt-BR')}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="font-black text-orange-600">${formatCurrency(d.value)}</span>
+                        <button onclick="deleteExpense(${d.id})" class="text-stone-300 group-hover:text-red-400 font-black">&times;</button>
+                    </div>
+                `;
+                expenseListEl.appendChild(item);
+            });
+        }
+
+        // Contas Fixas
+        billListEl.innerHTML = '';
+        let totalContasPagasValor = 0;
+        
+        const sortedContas = [...contas].sort((a, b) => sorts.contas === 'status' ? a.paid - b.paid || b.value - a.value : b.value - a.value);
+
+        if (sortedContas.length === 0) {
+            billListEl.innerHTML = '<p class="text-[10px] text-stone-400 italic text-center py-2">Nenhuma conta cadastrada.</p>';
+        } else {
+            sortedContas.forEach(c => {
+                if (c.paid) totalContasPagasValor += c.value;
+                const div = document.createElement('div');
+                div.className = `flex justify-between items-center p-3 rounded-xl border text-sm ${c.paid ? 'bg-rose-50/50 border-rose-100 opacity-60' : 'bg-stone-50 border-stone-100'}`;
+                div.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <input type="checkbox" ${c.paid ? 'checked' : ''} onchange="toggleBill(${c.id})" class="h-5 w-5 rounded text-rose-500 focus:ring-rose-500 border-stone-300">
+                        <span class="${c.paid ? 'paid-item text-stone-400' : 'font-bold text-stone-700'}">${c.name}</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="font-bold ${c.paid ? 'text-stone-400' : 'text-stone-900'}">${formatCurrency(c.value)}</span>
+                        <button onclick="deleteBill(${c.id})" class="text-stone-300 hover:text-red-500 font-black">&times;</button>
+                    </div>
+                `;
+                billListEl.appendChild(div);
+            });
+        }
+
+        // Previstos
+        previstoListEl.innerHTML = '';
+        let totalPrevistosPendentes = 0;
+        let totalPrevistosPagos = 0;
+        
+        const sortedPrevistos = [...previstos].sort((a,b) => a.paid - b.paid || b.value - a.value);
+        
+        if (sortedPrevistos.length === 0) {
+            previstoListEl.innerHTML = '<p class="text-[10px] text-stone-400 italic text-center py-2">Nenhuma previsão de gasto.</p>';
+        } else {
+            sortedPrevistos.forEach(p => {
+                if (!p.paid) totalPrevistosPendentes += p.value;
+                else totalPrevistosPagos += p.value;
+                
+                const div = document.createElement('div');
+                div.className = `flex justify-between items-center p-3 rounded-xl border text-sm ${p.paid ? 'bg-amber-50/50 border-amber-100 opacity-60' : 'bg-stone-50 border-stone-100'}`;
+                div.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <input type="checkbox" ${p.paid ? 'checked' : ''} onchange="togglePrevisto(${p.id})" class="h-5 w-5 rounded text-amber-500 focus:ring-amber-500 border-stone-300">
+                        <span class="${p.paid ? 'paid-item text-stone-400' : 'font-bold text-stone-700'}">${p.name}</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="font-bold ${p.paid ? 'text-stone-400' : 'text-stone-900'}">${formatCurrency(p.value)}</span>
+                        <button onclick="deletePrevisto(${p.id})" class="text-stone-300 hover:text-red-500 font-black">&times;</button>
+                    </div>
+                `;
+                previstoListEl.appendChild(div);
+            });
+        }
+
+        // ATUALIZAR RESUMO (DASHBOARD)
+        const saldoAnterior = getCumulativePreviousBalance(monthFilter.value);
+        resumoSaldoAnterior.textContent = formatCurrency(saldoAnterior);
+        resumoSaldoAnterior.className = `font-black ${saldoAnterior >= 0 ? 'text-green-300' : 'text-red-400'}`;
+
+        resumoRendaRecebida.textContent = formatCurrency(totalRendaRecebida);
+        resumoAportes.textContent = formatCurrency(totalAportesPagos);
+        resumoPagas.textContent = formatCurrency(totalContasPagasValor);
+        resumoDespesas.textContent = formatCurrency(totalDespesas);
+        resumoPrevistos.textContent = formatCurrency(totalPrevistosPendentes);
+
+        const totalEntrou = totalRendaRecebida + totalAportesPagos;
+        const totalSaiu = totalContasPagasValor + totalDespesas + totalPrevistosPagos;
+
+        const sobraRealMes = totalEntrou - totalSaiu;
+        const sobraRealTotal = sobraRealMes + saldoAnterior;
+        
+        sobraDisplay.textContent = formatCurrency(sobraRealTotal);
+        sobraDisplay.classList.remove('text-white', 'text-red-400');
+        sobraDisplay.classList.add(sobraRealTotal >= 0 ? 'text-white' : 'text-red-400');
+        
+        const projecaoFinal = sobraRealTotal - totalPrevistosPendentes;
+        projecaoDisplay.textContent = formatCurrency(projecaoFinal);
+        projecaoDisplay.classList.remove('text-white', 'text-red-400');
+        projecaoDisplay.classList.add(projecaoFinal >= 0 ? 'text-white' : 'text-red-400');
+
+        // Texts buttons
+        document.getElementById('btn-sort-rendas').innerHTML = sorts.rendas === 'status' ? '<span>P</span> Pendentes' : '<span>$</span> Valor';
+        document.getElementById('btn-sort-aportes').innerHTML = sorts.aportes === 'status' ? '<span>P</span> Pendentes' : '<span>$</span> Valor';
+        document.getElementById('btn-sort-contas').innerHTML = sorts.contas === 'status' ? '<span>P</span> Pendentes' : '<span>$</span> Valor';
+        document.getElementById('btn-sort-despesas').innerHTML = sorts.despesas === 'date' ? '<span>📅</span> Data' : '<span>$</span> Valor';
+    }
+
+    // EVENTOS DOS FORMULÁRIOS
+    rendaForm.onsubmit = (e) => {
+        e.preventDefault();
+        const data = loadData();
+        data.rendas.push({ id: Date.now(), name: rendaNameInput.value, value: parseValue(rendaValueInput.value), paid: false });
+        saveData(data);
+        rendaForm.reset();
+        updateUI();
+    };
+
+    window.toggleRenda = (id) => {
+        const data = loadData();
+        const r = data.rendas.find(x => x.id === id);
+        if (r) r.paid = !r.paid;
+        saveData(data);
+        updateUI();
+    };
+
+    window.deleteRenda = (id) => {
+        const data = loadData();
+        data.rendas = data.rendas.filter(x => x.id !== id);
+        saveData(data);
+        updateUI();
+    };
+
+    aporteForm.onsubmit = (e) => {
+        e.preventDefault();
+        const data = loadData();
+        data.aportes.push({ id: Date.now(), name: aporteNameInput.value, value: parseValue(aporteValueInput.value), paid: false });
+        saveData(data);
+        aporteForm.reset();
+        updateUI();
+    };
+
+    window.toggleAporte = (id) => {
+        const data = loadData();
+        const a = data.aportes.find(a => a.id === id);
+        if (a) a.paid = !a.paid;
+        saveData(data);
+        updateUI();
+    };
+
+    window.deleteAporte = (id) => {
+        const data = loadData();
+        data.aportes = data.aportes.filter(a => a.id !== id);
+        saveData(data);
+        updateUI();
+    };
+
+    expenseForm.onsubmit = (e) => {
+        e.preventDefault();
+        const data = loadData();
+        data.despesas.push({
+            id: Date.now(),
+            desc: expenseDescInput.value,
+            value: parseValue(expenseValueInput.value),
+            date: expenseDateInput.value
+        });
+        saveData(data);
+        expenseDescInput.value = '';
+        expenseValueInput.value = '';
+        updateUI();
+    };
+
+    window.deleteExpense = (id) => {
+        const data = loadData();
+        data.despesas = data.despesas.filter(d => d.id !== id);
+        saveData(data);
+        updateUI();
+    };
+
+    billForm.onsubmit = (e) => {
+        e.preventDefault();
+        const data = loadData();
+        data.contas.push({ id: Date.now(), name: billNameInput.value, value: parseValue(billValueInput.value), paid: false });
+        saveData(data);
+        billForm.reset();
+        updateUI();
+    };
+
+    window.toggleBill = (id) => {
+        const data = loadData();
+        const b = data.contas.find(c => c.id === id);
+        if (b) b.paid = !b.paid;
+        saveData(data);
+        updateUI();
+    };
+
+    window.deleteBill = (id) => {
+        const data = loadData();
+        data.contas = data.contas.filter(c => c.id !== id);
+        saveData(data);
+        updateUI();
+    };
+
+    previstoForm.onsubmit = (e) => {
+        e.preventDefault();
+        const data = loadData();
+        data.previstos.push({ id: Date.now(), name: previstoNameInput.value, value: parseValue(previstoValueInput.value), paid: false });
+        saveData(data);
+        previstoForm.reset();
+        updateUI();
+    };
+
+    window.togglePrevisto = (id) => {
+        const data = loadData();
+        const p = data.previstos.find(x => x.id === id);
+        if (p) p.paid = !p.paid;
+        saveData(data);
+        updateUI();
+    };
+
+    window.deletePrevisto = (id) => {
+        const data = loadData();
+        data.previstos = data.previstos.filter(p => p.id !== id);
+        saveData(data);
+        updateUI();
+    };
+
+    // CALCULADORA
+    window.toggleCalc = () => { document.getElementById('calc-widget').classList.toggle('hidden'); };
+    let calcExpression = "0";
+    const display = document.getElementById('calc-display');
+    window.calcNum = (n) => { calcExpression = calcExpression === "0" ? n : calcExpression + n; display.value = calcExpression; };
+    window.calcOp = (op) => { if (!['+', '-', '*', '/'].includes(calcExpression.slice(-1))) calcExpression += op; display.value = calcExpression; };
+    window.calcClear = () => { calcExpression = "0"; display.value = "0"; };
+    window.calcDelete = () => { calcExpression = calcExpression.slice(0, -1) || "0"; display.value = calcExpression; };
+    window.calcEqual = () => { try { calcExpression = eval(calcExpression).toString(); display.value = calcExpression; } catch { display.value = "Erro"; calcExpression = "0"; } };
+
+    // BACKUP
+    window.exportData = () => {
+        const month = monthFilter.value;
+        const backup = { mes: month, ...loadData() };
+        const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href = url; a.download = `anna_pessoal_backup_${month}.json`; a.click();
+    };
+
+    monthFilter.onchange = updateUI;
+
+    // Início
+    const today = new Date();
+    monthFilter.value = today.toISOString().substring(0, 7);
+    expenseDateInput.value = today.toISOString().split('T')[0];
+    updateUI();
+});
+</script>
+</body>
+</html>
