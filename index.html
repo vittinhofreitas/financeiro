@@ -26,9 +26,10 @@
 
     <div class="container mx-auto max-w-6xl p-4 sm:p-6">
         
+        <!-- CABEÇALHO -->
         <header class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 bg-white p-6 rounded-3xl shadow-sm border border-stone-200">
             <div class="text-center md:text-left flex items-center gap-4">
-                <div class="w-14 h-14 bg-amber-100 rounded-full flex items-center justify-center text-2xl shadow-inner">🤑</div>
+                <div class="w-14 h-14 bg-amber-100 rounded-full flex items-center justify-center text-2xl shadow-inner">🪴</div>
                 <div>
                     <h1 class="text-3xl font-black text-stone-900 tracking-tight">Painel <span class="text-amber-700">Financeiro</span></h1>
                     <p class="text-amber-600 font-medium text-sm">Gestão Pessoal</p>
@@ -50,30 +51,50 @@
 
         <main class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-            <!-- Coluna 1: Renda e Entradas -->
+            <!-- COLUNA 1: ENTRADAS E DEVEDORES -->
             <div class="lg:col-span-1 space-y-6">
                 
-                <!-- Renda Mensal (Dinâmica) -->
+                <!-- Renda: Trancista -->
                 <section class="bg-white p-6 rounded-3xl shadow-sm border border-stone-200 relative overflow-hidden">
                     <div class="absolute top-0 left-0 w-1.5 h-full bg-green-600"></div>
                     <div class="flex justify-between items-start mb-4">
                         <div>
-                            <h2 class="text-lg font-bold text-stone-800">Minhas Entradas</h2>
-                            <span class="text-[10px] bg-green-50 text-green-700 px-2 py-1 rounded-full uppercase font-bold">Renda</span>
+                            <h2 class="text-lg font-bold text-stone-800">Renda: Trancista</h2>
+                            <span class="text-[10px] bg-green-50 text-green-700 px-2 py-1 rounded-full uppercase font-bold">Trabalho Diário</span>
                         </div>
-                        <button onclick="toggleSort('rendas')" class="sort-btn" id="btn-sort-rendas"><span>⇅</span> Valor</button>
+                        <button onclick="toggleSort('rendas')" class="sort-btn" id="btn-sort-rendas"><span>⇅</span> Pendentes</button>
                     </div>
                     <form id="renda-form" class="space-y-3 mb-4">
-                        <input type="text" id="renda-name" placeholder="Ex: Procedimentos, Venda, Diárias" class="w-full border-stone-200 rounded-xl text-sm border p-3 focus:border-green-500" required>
+                        <input type="text" id="renda-name" placeholder="Ex: Trança Nagô, Manutenção..." class="w-full border-stone-200 rounded-xl text-sm border p-3 focus:border-green-500" required>
                         <div class="flex gap-2">
                             <input type="text" id="renda-value" placeholder="R$ 0,00" class="currency-input flex-grow border-stone-200 rounded-xl text-sm border p-3 font-bold text-green-700 focus:border-green-500" required>
-                            <button type="submit" class="bg-green-600 text-white font-black py-2 px-6 rounded-xl hover:bg-green-700 transition">+</button>
+                            <button type="submit" id="btn-submit-renda" class="bg-green-600 text-white font-black py-2 px-6 rounded-xl hover:bg-green-700 transition">+</button>
                         </div>
                     </form>
                     <div id="renda-list" class="space-y-2 max-h-40 overflow-y-auto pr-1 custom-scroll"></div>
                 </section>
 
-                <!-- Devedores / A Receber -->
+                <!-- Renda: Bartender -->
+                <section class="bg-white p-6 rounded-3xl shadow-sm border border-stone-200 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-1.5 h-full bg-emerald-500"></div>
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h2 class="text-lg font-bold text-stone-800">Renda: Bartender</h2>
+                            <span class="text-[10px] bg-emerald-50 text-emerald-700 px-2 py-1 rounded-full uppercase font-bold">Eventos / Diárias</span>
+                        </div>
+                        <button onclick="toggleSort('bartender')" class="sort-btn" id="btn-sort-bartender"><span>⇅</span> Pendentes</button>
+                    </div>
+                    <form id="bartender-form" class="space-y-3 mb-4">
+                        <input type="text" id="bartender-name" placeholder="Ex: Diária Bar, Caixinha..." class="w-full border-stone-200 rounded-xl text-sm border p-3 focus:border-emerald-500" required>
+                        <div class="flex gap-2">
+                            <input type="text" id="bartender-value" placeholder="R$ 0,00" class="currency-input flex-grow border-stone-200 rounded-xl text-sm border p-3 font-bold text-emerald-700 focus:border-emerald-500" required>
+                            <button type="submit" id="btn-submit-bartender" class="bg-emerald-500 text-white font-black py-2 px-6 rounded-xl hover:bg-emerald-600 transition">+</button>
+                        </div>
+                    </form>
+                    <div id="bartender-list" class="space-y-2 max-h-40 overflow-y-auto pr-1 custom-scroll"></div>
+                </section>
+
+                <!-- A Receber / Devedores -->
                 <section class="bg-white p-6 rounded-3xl shadow-sm border border-stone-200 relative overflow-hidden">
                     <div class="absolute top-0 left-0 w-1.5 h-full bg-teal-500"></div>
                     <div class="flex justify-between items-start mb-4">
@@ -81,37 +102,20 @@
                             <h2 class="text-lg font-bold text-stone-800">A Receber</h2>
                             <span class="text-[10px] bg-teal-50 text-teal-600 px-2 py-1 rounded-full uppercase font-bold">Devedores / Reembolsos</span>
                         </div>
-                        <button onclick="toggleSort('aportes')" class="sort-btn" id="btn-sort-aportes"><span>⇅</span> Valor</button>
+                        <button onclick="toggleSort('aportes')" class="sort-btn" id="btn-sort-aportes"><span>⇅</span> Pendentes</button>
                     </div>
                     <form id="aporte-form" class="space-y-3 mb-4">
                         <input type="text" id="aporte-name" placeholder="Quem está devendo?" class="w-full border-stone-200 rounded-xl text-sm border p-3 focus:border-teal-500" required>
                         <div class="flex gap-2">
                             <input type="text" id="aporte-value" placeholder="R$ 0,00" class="currency-input flex-grow border-stone-200 rounded-xl text-sm border p-3 font-bold text-teal-700 focus:border-teal-500" required>
-                            <button type="submit" class="bg-teal-600 text-white font-black py-2 px-6 rounded-xl hover:bg-teal-700 transition">+</button>
+                            <button type="submit" id="btn-submit-aporte" class="bg-teal-600 text-white font-black py-2 px-6 rounded-xl hover:bg-teal-700 transition">+</button>
                         </div>
                     </form>
                     <div id="aporte-list" class="space-y-2 max-h-40 overflow-y-auto pr-1 custom-scroll"></div>
                 </section>
-
-                <!-- Contas Fixas -->
-                <section class="bg-white p-6 rounded-3xl shadow-sm border border-stone-200 relative overflow-hidden">
-                    <div class="absolute top-0 left-0 w-1.5 h-full bg-rose-500"></div>
-                    <div class="flex justify-between items-start mb-4">
-                        <h2 class="text-lg font-bold text-stone-800">Contas Fixas</h2>
-                        <button onclick="toggleSort('contas')" class="sort-btn" id="btn-sort-contas"><span>⇅</span> Valor</button>
-                    </div>
-                     <form id="bill-form" class="space-y-3 mb-4">
-                        <input type="text" id="bill-name" placeholder="Ex: Aluguel, Internet, Energia" class="w-full border-stone-200 rounded-xl text-sm border p-3 focus:border-rose-400" required>
-                        <div class="flex gap-2">
-                            <input type="text" id="bill-value" placeholder="R$ 0,00" class="currency-input flex-grow border-stone-200 rounded-xl text-sm border p-3 font-bold text-rose-600 focus:border-rose-400" required>
-                            <button type="submit" class="bg-rose-500 text-white font-black py-2 px-6 rounded-xl hover:bg-rose-600 transition">+</button>
-                        </div>
-                    </form>
-                    <div id="bill-list" class="space-y-3 max-h-60 overflow-y-auto pr-1 custom-scroll"></div>
-                </section>
             </div>
 
-            <!-- Coluna 2: Lançamentos Variáveis e Previstos -->
+            <!-- COLUNA 2: DESPESAS, CONTAS E PREVISTOS -->
             <div class="lg:col-span-1 space-y-6">
                 
                 <!-- Adicionar Despesa -->
@@ -122,6 +126,17 @@
                         <div>
                             <input type="text" id="expense-desc" class="w-full border-stone-200 rounded-xl border p-3 text-sm focus:border-orange-400" placeholder="O que você pagou/comprou?" required>
                         </div>
+                        <div>
+                            <select id="expense-category" class="w-full border-stone-200 rounded-xl border p-3 text-sm bg-stone-50 focus:border-orange-400 text-stone-700" required>
+                                <option value="" disabled selected>Escolha a categoria...</option>
+                                <option value="🛒 Alimentação">🛒 Alimentação</option>
+                                <option value="💄 Beleza / Pessoal">💄 Beleza / Pessoal</option>
+                                <option value="🚗 Transporte">🚗 Transporte</option>
+                                <option value="🎉 Lazer / Saídas">🎉 Lazer / Saídas</option>
+                                <option value="🏠 Casa / Moradia">🏠 Casa / Moradia</option>
+                                <option value="⚙️ Outros">⚙️ Outros</option>
+                            </select>
+                        </div>
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <input type="date" id="expense-date" class="w-full border-stone-200 rounded-xl border p-3 text-sm focus:border-orange-400" required>
@@ -130,7 +145,7 @@
                                 <input type="text" id="expense-value" class="currency-input w-full border-stone-200 rounded-xl border p-3 font-black text-orange-600 focus:border-orange-400" placeholder="R$ 0,00" required>
                             </div>
                         </div>
-                        <button type="submit" class="w-full bg-orange-500 text-white font-black py-3 px-4 rounded-xl hover:bg-orange-600 transition shadow-md shadow-orange-200">Registrar no Caixa</button>
+                        <button type="submit" id="btn-submit-expense" class="w-full bg-orange-500 text-white font-black py-3 px-4 rounded-xl hover:bg-orange-600 transition shadow-md shadow-orange-200">Registrar no Caixa</button>
                     </form>
                 </section>
 
@@ -138,11 +153,28 @@
                 <section class="bg-white p-6 rounded-3xl shadow-sm border border-stone-200">
                      <div class="flex justify-between items-center mb-4 border-b border-stone-100 pb-3">
                         <h2 class="text-[10px] font-black uppercase tracking-widest text-stone-400">Extrato de Saídas</h2>
-                        <button onclick="toggleSort('despesas')" class="sort-btn" id="btn-sort-despesas"><span>⇅</span> Valor</button>
+                        <button onclick="toggleSort('despesas')" class="sort-btn" id="btn-sort-despesas"><span>📅</span> Data</button>
                      </div>
-                     <div id="expense-list" class="space-y-3 max-h-[250px] overflow-y-auto pr-2 custom-scroll text-sm">
+                     <div id="expense-list" class="space-y-3 max-h-[300px] overflow-y-auto pr-2 custom-scroll text-sm">
                          <p class="text-center text-stone-400 py-4 italic text-xs">Nenhum gasto registrado.</p>
                      </div>
+                </section>
+
+                <!-- Contas Fixas -->
+                <section class="bg-white p-6 rounded-3xl shadow-sm border border-stone-200 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-1.5 h-full bg-rose-500"></div>
+                    <div class="flex justify-between items-start mb-4">
+                        <h2 class="text-lg font-bold text-stone-800">Contas Fixas</h2>
+                        <button onclick="toggleSort('contas')" class="sort-btn" id="btn-sort-contas"><span>⇅</span> Pendentes</button>
+                    </div>
+                     <form id="bill-form" class="space-y-3 mb-4">
+                        <input type="text" id="bill-name" placeholder="Ex: Internet, Celular..." class="w-full border-stone-200 rounded-xl text-sm border p-3 focus:border-rose-400" required>
+                        <div class="flex gap-2">
+                            <input type="text" id="bill-value" placeholder="R$ 0,00" class="currency-input flex-grow border-stone-200 rounded-xl text-sm border p-3 font-bold text-rose-600 focus:border-rose-400" required>
+                            <button type="submit" id="btn-submit-bill" class="bg-rose-500 text-white font-black py-2 px-6 rounded-xl hover:bg-rose-600 transition">+</button>
+                        </div>
+                    </form>
+                    <div id="bill-list" class="space-y-3 max-h-40 overflow-y-auto pr-1 custom-scroll"></div>
                 </section>
 
                 <!-- Gastos Previstos -->
@@ -155,17 +187,17 @@
                         </div>
                     </div>
                     <form id="previsto-form" class="space-y-3 mb-4">
-                        <input type="text" id="previsto-name" placeholder="Ex: Evento, Viagem..." class="w-full border-stone-200 rounded-xl text-sm border p-3 focus:border-amber-400" required>
+                        <input type="text" id="previsto-name" placeholder="Ex: Roupas, Presente..." class="w-full border-stone-200 rounded-xl text-sm border p-3 focus:border-amber-400" required>
                         <div class="flex gap-2">
                             <input type="text" id="previsto-value" placeholder="R$ 0,00" class="currency-input flex-grow border-stone-200 rounded-xl text-sm border p-3 font-bold text-amber-700 focus:border-amber-400" required>
-                            <button type="submit" class="bg-amber-500 text-white font-black py-2 px-6 rounded-xl hover:bg-amber-600 transition">+</button>
+                            <button type="submit" id="btn-submit-previsto" class="bg-amber-500 text-white font-black py-2 px-6 rounded-xl hover:bg-amber-600 transition">+</button>
                         </div>
                     </form>
                     <div id="previsto-list" class="space-y-2 max-h-40 overflow-y-auto pr-1 custom-scroll"></div>
                 </section>
             </div>
 
-            <!-- Coluna 3: Resumo Financeiro -->
+            <!-- COLUNA 3: VISÃO GERAL -->
             <div class="lg:col-span-1 space-y-6">
                 <section class="bg-stone-900 p-6 rounded-[2rem] shadow-xl sticky top-6 text-white border-b-8 border-stone-700">
                     <h2 class="text-xl font-black mb-6 text-center text-amber-100 tracking-tight">Visão Geral do Caixa</h2>
@@ -174,22 +206,35 @@
                         
                         <div class="bg-stone-800/50 p-4 rounded-2xl border border-stone-700 space-y-3">
                             <div class="flex justify-between items-center">
-                                <span class="text-xs text-stone-300">Renda Confirmada</span>
+                                <span class="text-xs text-stone-300">Trancista (Recebido)</span>
                                 <span id="resumo-renda-recebida" class="font-bold text-green-400">R$ 0,00</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs text-stone-300">Bartender (Recebido)</span>
+                                <span id="resumo-bartender" class="font-bold text-emerald-400">R$ 0,00</span>
                             </div>
                             <div class="flex justify-between items-center">
                                 <span class="text-xs text-stone-300">A Receber / Reembolsos</span>
                                 <span id="resumo-aportes" class="font-bold text-teal-400">R$ 0,00</span>
                             </div>
                             <div class="h-px w-full bg-stone-700 my-1"></div>
+                            
                             <div class="flex justify-between items-center">
                                 <span class="text-xs text-stone-300">Contas Fixas Pagas</span>
                                 <span id="resumo-pagas" class="font-bold text-rose-400">R$ 0,00</span>
                             </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-xs text-stone-300">Gastos Variáveis</span>
-                                <span id="resumo-despesas" class="font-bold text-orange-400">R$ 0,00</span>
+                            
+                            <!-- Seção de Gastos Variáveis e Categorias -->
+                            <div class="flex flex-col gap-1">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-xs text-stone-300">Gastos Variáveis Total</span>
+                                    <span id="resumo-despesas" class="font-bold text-orange-400">R$ 0,00</span>
+                                </div>
+                                <div id="resumo-categorias" class="pl-2 border-l border-stone-700 mt-1 space-y-1">
+                                    <!-- Categorias inseridas via JS -->
+                                </div>
                             </div>
+                            
                             <div class="flex justify-between items-center border-t border-dashed border-stone-700 pt-3">
                                 <span class="text-xs text-amber-300">Previstos (Ainda Pendentes)</span>
                                 <span id="resumo-previstos" class="font-bold text-amber-300">R$ 0,00</span>
@@ -260,51 +305,77 @@ document.addEventListener('DOMContentLoaded', () => {
     // ESTADO DE ORDENAÇÃO
     let sorts = {
         rendas: 'status',
+        bartender: 'status',
         contas: 'status',
         despesas: 'date',
         aportes: 'status'
     };
 
+    // ESTADO DE EDIÇÃO
+    let editing = {
+        rendas: null,
+        bartender: null,
+        aportes: null,
+        contas: null,
+        despesas: null,
+        previstos: null
+    };
+
     // ELEMENTOS DO DOM
     const monthFilter = document.getElementById('monthFilter');
     
-    // Rendas
+    // Trancista
     const rendaForm = document.getElementById('renda-form');
     const rendaNameInput = document.getElementById('renda-name');
     const rendaValueInput = document.getElementById('renda-value');
     const rendaListEl = document.getElementById('renda-list');
+    const btnSubmitRenda = document.getElementById('btn-submit-renda');
 
-    // A Receber (Aportes)
+    // Bartender
+    const bartenderForm = document.getElementById('bartender-form');
+    const bartenderNameInput = document.getElementById('bartender-name');
+    const bartenderValueInput = document.getElementById('bartender-value');
+    const bartenderListEl = document.getElementById('bartender-list');
+    const btnSubmitBartender = document.getElementById('btn-submit-bartender');
+
+    // Aportes
     const aporteForm = document.getElementById('aporte-form');
     const aporteNameInput = document.getElementById('aporte-name');
     const aporteValueInput = document.getElementById('aporte-value');
     const aporteListEl = document.getElementById('aporte-list');
+    const btnSubmitAporte = document.getElementById('btn-submit-aporte');
 
     // Contas
     const billForm = document.getElementById('bill-form');
     const billNameInput = document.getElementById('bill-name');
     const billValueInput = document.getElementById('bill-value');
     const billListEl = document.getElementById('bill-list');
+    const btnSubmitBill = document.getElementById('btn-submit-bill');
 
     // Despesas Variáveis
     const expenseForm = document.getElementById('expense-form');
     const expenseDescInput = document.getElementById('expense-desc');
+    const expenseCategoryInput = document.getElementById('expense-category');
     const expenseValueInput = document.getElementById('expense-value');
     const expenseDateInput = document.getElementById('expense-date');
     const expenseListEl = document.getElementById('expense-list');
+    const btnSubmitExpense = document.getElementById('btn-submit-expense');
 
     // Previstos
     const previstoForm = document.getElementById('previsto-form');
     const previstoNameInput = document.getElementById('previsto-name');
     const previstoValueInput = document.getElementById('previsto-value');
     const previstoListEl = document.getElementById('previsto-list');
+    const btnSubmitPrevisto = document.getElementById('btn-submit-previsto');
 
-    // Resumo
+    // Resumo Dashboard
     const resumoSaldoAnterior = document.getElementById('resumo-saldo-anterior');
     const resumoRendaRecebida = document.getElementById('resumo-renda-recebida');
+    const resumoBartender = document.getElementById('resumo-bartender');
     const resumoAportes = document.getElementById('resumo-aportes');
     const resumoPagas = document.getElementById('resumo-pagas');
     const resumoDespesas = document.getElementById('resumo-despesas');
+    const resumoCategorias = document.getElementById('resumo-categorias');
     const resumoPrevistos = document.getElementById('resumo-previstos');
     const sobraDisplay = document.getElementById('sobra-display');
     const projecaoDisplay = document.getElementById('projecao-display');
@@ -327,20 +398,25 @@ document.addEventListener('DOMContentLoaded', () => {
             e.target.value = floatValue.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
         });
     };
-
     document.querySelectorAll('.currency-input').forEach(setupCurrencyMask);
 
-    // PERSISTÊNCIA (Isolada para a Anna Pessoal)
+    // MÁSCARA PARA INJETAR VALOR (USADO NO BOTÃO EDITAR)
+    const setCurrencyInputValue = (input, valueFloat) => {
+        input.value = valueFloat.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+    };
+
+    // PERSISTÊNCIA
     const loadData = () => {
         const rendas = JSON.parse(localStorage.getItem(getStorageKey('rendas'))) || [];
+        const bartender = JSON.parse(localStorage.getItem(getStorageKey('bartender'))) || [];
         const aportes = JSON.parse(localStorage.getItem(getStorageKey('aportes'))) || [];
         const despesas = JSON.parse(localStorage.getItem(getStorageKey('despesas'))) || [];
         const previstos = JSON.parse(localStorage.getItem(getStorageKey('previstos'))) || [];
         const contas = JSON.parse(localStorage.getItem(getStorageKey('contas'))) || [];
-        return { rendas, aportes, contas, despesas, previstos };
+        return { rendas, bartender, aportes, contas, despesas, previstos };
     };
 
-    // Histórico de saldo
+    // Histórico de saldo de meses anteriores
     const getCumulativePreviousBalance = (currentMonthStr) => {
         let balance = 0;
         const allKeys = Object.keys(localStorage);
@@ -349,31 +425,32 @@ document.addEventListener('DOMContentLoaded', () => {
             const match = k.match(/anna_pessoal_.*_(\d{4}-\d{2})/);
             if (match) monthKeys.add(match[1]);
         });
-
         const sortedMonths = Array.from(monthKeys).sort();
         
         for (const m of sortedMonths) {
             if (m >= currentMonthStr) continue;
-
             const rendas = JSON.parse(localStorage.getItem(`anna_pessoal_rendas_${m}`)) || [];
+            const bartender = JSON.parse(localStorage.getItem(`anna_pessoal_bartender_${m}`)) || [];
             const aportes = JSON.parse(localStorage.getItem(`anna_pessoal_aportes_${m}`)) || [];
             const contas = JSON.parse(localStorage.getItem(`anna_pessoal_contas_${m}`)) || [];
             const despesas = JSON.parse(localStorage.getItem(`anna_pessoal_despesas_${m}`)) || [];
             const previstos = JSON.parse(localStorage.getItem(`anna_pessoal_previstos_${m}`)) || [];
 
             const recRenda = rendas.filter(r => r.paid).reduce((acc, r) => acc + r.value, 0);
+            const recBartender = bartender.filter(b => b.paid).reduce((acc, b) => acc + b.value, 0);
             const recAportes = aportes.filter(a => a.paid).reduce((acc, a) => acc + a.value, 0);
             const pagContas = contas.filter(c => c.paid).reduce((acc, c) => acc + c.value, 0);
             const pagDespesas = despesas.reduce((acc, d) => acc + d.value, 0);
             const pagPrevistos = previstos.filter(p => p.paid).reduce((acc, p) => acc + p.value, 0);
 
-            balance += (recRenda + recAportes) - pagContas - pagDespesas - pagPrevistos;
+            balance += (recRenda + recBartender + recAportes) - pagContas - pagDespesas - pagPrevistos;
         }
         return balance;
     };
 
     const saveData = (data) => {
         localStorage.setItem(getStorageKey('rendas'), JSON.stringify(data.rendas));
+        localStorage.setItem(getStorageKey('bartender'), JSON.stringify(data.bartender));
         localStorage.setItem(getStorageKey('aportes'), JSON.stringify(data.aportes));
         localStorage.setItem(getStorageKey('contas'), JSON.stringify(data.contas));
         localStorage.setItem(getStorageKey('despesas'), JSON.stringify(data.despesas));
@@ -387,19 +464,14 @@ document.addEventListener('DOMContentLoaded', () => {
         updateUI();
     };
 
-    // RENDERIZAÇÃO E CÁLCULOS
+    // RENDERIZAÇÃO
     function updateUI() {
-        const { rendas, aportes, contas, despesas, previstos } = loadData();
+        const { rendas, bartender, aportes, contas, despesas, previstos } = loadData();
 
-        // Rendas (Dinâmico)
+        // --- RENDA TRANCISTA ---
         rendaListEl.innerHTML = '';
         let totalRendaRecebida = 0;
-
-        const sortedRendas = [...rendas].sort((a, b) => {
-            if (sorts.rendas === 'status') return a.paid - b.paid || b.value - a.value;
-            return b.value - a.value;
-        });
-
+        const sortedRendas = [...rendas].sort((a, b) => sorts.rendas === 'status' ? a.paid - b.paid || b.value - a.value : b.value - a.value);
         if (sortedRendas.length === 0) {
             rendaListEl.innerHTML = '<p class="text-[10px] text-stone-400 italic text-center py-2">Nenhuma entrada cadastrada.</p>';
         } else {
@@ -414,22 +486,48 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div class="flex items-center gap-3">
                         <span class="font-bold ${r.paid ? 'text-stone-400' : 'text-stone-900'}">${formatCurrency(r.value)}</span>
-                        <button onclick="deleteRenda(${r.id})" class="text-stone-300 hover:text-red-500 font-black">&times;</button>
+                        <div class="flex flex-col items-center ml-2">
+                            <button onclick="editRenda(${r.id})" class="text-blue-400 hover:text-blue-600 text-xs mb-1">✏️</button>
+                            <button onclick="deleteRenda(${r.id})" class="text-stone-300 hover:text-red-500 font-black">&times;</button>
+                        </div>
                     </div>
                 `;
                 rendaListEl.appendChild(div);
             });
         }
 
-        // Aportes (A Receber)
+        // --- RENDA BARTENDER ---
+        bartenderListEl.innerHTML = '';
+        let totalBartenderRecebido = 0;
+        const sortedBartender = [...bartender].sort((a, b) => sorts.bartender === 'status' ? a.paid - b.paid || b.value - a.value : b.value - a.value);
+        if (sortedBartender.length === 0) {
+            bartenderListEl.innerHTML = '<p class="text-[10px] text-stone-400 italic text-center py-2">Nenhuma diária registrada.</p>';
+        } else {
+            sortedBartender.forEach(b => {
+                if (b.paid) totalBartenderRecebido += b.value;
+                const div = document.createElement('div');
+                div.className = `flex justify-between items-center p-3 rounded-xl border text-sm ${b.paid ? 'bg-emerald-50/50 border-emerald-100 opacity-60' : 'bg-stone-50 border-stone-100'}`;
+                div.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <input type="checkbox" ${b.paid ? 'checked' : ''} onchange="toggleBartender(${b.id})" class="h-5 w-5 rounded text-emerald-500 focus:ring-emerald-500 border-stone-300">
+                        <span class="${b.paid ? 'paid-item text-stone-400' : 'font-bold text-stone-700'}">${b.name}</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="font-bold ${b.paid ? 'text-stone-400' : 'text-stone-900'}">${formatCurrency(b.value)}</span>
+                        <div class="flex flex-col items-center ml-2">
+                            <button onclick="editBartender(${b.id})" class="text-blue-400 hover:text-blue-600 text-xs mb-1">✏️</button>
+                            <button onclick="deleteBartender(${b.id})" class="text-stone-300 hover:text-red-500 font-black">&times;</button>
+                        </div>
+                    </div>
+                `;
+                bartenderListEl.appendChild(div);
+            });
+        }
+
+        // --- APORTES (A Receber) ---
         aporteListEl.innerHTML = '';
         let totalAportesPagos = 0;
-        
-        const sortedAportes = [...aportes].sort((a, b) => {
-            if (sorts.aportes === 'status') return a.paid - b.paid || b.value - a.value;
-            return b.value - a.value;
-        });
-
+        const sortedAportes = [...aportes].sort((a, b) => sorts.aportes === 'status' ? a.paid - b.paid || b.value - a.value : b.value - a.value);
         if (sortedAportes.length === 0) {
             aporteListEl.innerHTML = '<p class="text-[10px] text-stone-400 italic text-center py-2">Ninguém devendo no momento.</p>';
         } else {
@@ -440,55 +538,73 @@ document.addEventListener('DOMContentLoaded', () => {
                 div.innerHTML = `
                     <div class="flex items-center gap-3">
                         <input type="checkbox" ${a.paid ? 'checked' : ''} onchange="toggleAporte(${a.id})" class="h-5 w-5 rounded text-teal-600 focus:ring-teal-500 border-stone-300">
-                        <div class="${a.paid ? 'paid-item' : 'text-stone-700 font-bold'}">
-                            <p class="text-[11px]">${a.name}</p>
-                        </div>
+                        <div class="${a.paid ? 'paid-item' : 'text-stone-700 font-bold'}"><p class="text-[11px]">${a.name}</p></div>
                     </div>
                     <div class="flex items-center gap-3">
                         <p class="text-[12px] font-black ${a.paid ? 'text-teal-600' : 'text-stone-900'}">${formatCurrency(a.value)}</p>
-                        <button onclick="deleteAporte(${a.id})" class="text-stone-300 hover:text-red-500 text-lg">&times;</button>
+                        <div class="flex flex-col items-center ml-1">
+                            <button onclick="editAporte(${a.id})" class="text-blue-400 hover:text-blue-600 text-xs mb-1">✏️</button>
+                            <button onclick="deleteAporte(${a.id})" class="text-stone-300 hover:text-red-500 text-lg">&times;</button>
+                        </div>
                     </div>
                 `;
                 aporteListEl.appendChild(div);
             });
         }
 
-        // Despesas Variáveis
+        // --- DESPESAS VARIÁVEIS ---
         expenseListEl.innerHTML = '';
         let totalDespesas = 0;
+        let totaisPorCategoria = {};
 
-        const sortedDespesas = [...despesas].sort((a, b) => sorts.despesas === 'value' ? b.value - a.value : new Date(b.date) - new Date(a.date));
+        const sortedDespesas = [...despesas].sort((a, b) => {
+            if (sorts.despesas === 'value') return b.value - a.value;
+            // Ordenação por Data Decrescente e, se for na mesma data, ID (Hora de Inserção) Decrescente
+            const dateDiff = new Date(b.date) - new Date(a.date);
+            if (dateDiff !== 0) return dateDiff;
+            return b.id - a.id; 
+        });
 
         if (sortedDespesas.length === 0) {
             expenseListEl.innerHTML = '<p class="text-center text-stone-400 py-4 text-xs italic">Sem gastos registrados.</p>';
         } else {
             sortedDespesas.forEach(d => {
                 totalDespesas += d.value;
+                const cat = d.category || '⚙️ Outros';
+                totaisPorCategoria[cat] = (totaisPorCategoria[cat] || 0) + d.value;
+
+                const emoji = cat.split(' ')[0] || '🛒';
+                const catName = cat.substring(emoji.length).trim() || cat;
+                const timeString = new Date(d.id).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
                 const item = document.createElement('div');
                 item.className = 'group flex justify-between items-center bg-stone-50 p-3 rounded-xl border border-stone-100 hover:border-orange-200 transition';
                 item.innerHTML = `
                     <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center text-sm border border-stone-100">🛒</div>
+                        <div class="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center text-sm border border-stone-100">${emoji}</div>
                         <div>
                             <p class="font-bold text-stone-700 text-sm">${d.desc}</p>
-                            <p class="text-[9px] font-black uppercase tracking-wider text-stone-400">${new Date(d.date + 'T12:00:00').toLocaleDateString('pt-BR')}</p>
+                            <p class="text-[9px] font-black uppercase tracking-wider text-stone-400">
+                                ${new Date(d.date + 'T12:00:00').toLocaleDateString('pt-BR')} ${timeString} • ${catName}
+                            </p>
                         </div>
                     </div>
                     <div class="flex items-center gap-3">
                         <span class="font-black text-orange-600">${formatCurrency(d.value)}</span>
-                        <button onclick="deleteExpense(${d.id})" class="text-stone-300 group-hover:text-red-400 font-black">&times;</button>
+                        <div class="flex flex-col items-center ml-2">
+                            <button onclick="editExpense(${d.id})" class="text-blue-400 hover:text-blue-600 text-xs mb-1">✏️</button>
+                            <button onclick="deleteExpense(${d.id})" class="text-stone-300 group-hover:text-red-400 font-black">&times;</button>
+                        </div>
                     </div>
                 `;
                 expenseListEl.appendChild(item);
             });
         }
 
-        // Contas Fixas
+        // --- CONTAS FIXAS ---
         billListEl.innerHTML = '';
         let totalContasPagasValor = 0;
-        
         const sortedContas = [...contas].sort((a, b) => sorts.contas === 'status' ? a.paid - b.paid || b.value - a.value : b.value - a.value);
-
         if (sortedContas.length === 0) {
             billListEl.innerHTML = '<p class="text-[10px] text-stone-400 italic text-center py-2">Nenhuma conta cadastrada.</p>';
         } else {
@@ -503,27 +619,27 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div class="flex items-center gap-3">
                         <span class="font-bold ${c.paid ? 'text-stone-400' : 'text-stone-900'}">${formatCurrency(c.value)}</span>
-                        <button onclick="deleteBill(${c.id})" class="text-stone-300 hover:text-red-500 font-black">&times;</button>
+                        <div class="flex flex-col items-center ml-2">
+                            <button onclick="editBill(${c.id})" class="text-blue-400 hover:text-blue-600 text-xs mb-1">✏️</button>
+                            <button onclick="deleteBill(${c.id})" class="text-stone-300 hover:text-red-500 font-black">&times;</button>
+                        </div>
                     </div>
                 `;
                 billListEl.appendChild(div);
             });
         }
 
-        // Previstos
+        // --- PREVISTOS ---
         previstoListEl.innerHTML = '';
         let totalPrevistosPendentes = 0;
         let totalPrevistosPagos = 0;
-        
         const sortedPrevistos = [...previstos].sort((a,b) => a.paid - b.paid || b.value - a.value);
-        
         if (sortedPrevistos.length === 0) {
             previstoListEl.innerHTML = '<p class="text-[10px] text-stone-400 italic text-center py-2">Nenhuma previsão de gasto.</p>';
         } else {
             sortedPrevistos.forEach(p => {
                 if (!p.paid) totalPrevistosPendentes += p.value;
                 else totalPrevistosPagos += p.value;
-                
                 const div = document.createElement('div');
                 div.className = `flex justify-between items-center p-3 rounded-xl border text-sm ${p.paid ? 'bg-amber-50/50 border-amber-100 opacity-60' : 'bg-stone-50 border-stone-100'}`;
                 div.innerHTML = `
@@ -533,25 +649,45 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div class="flex items-center gap-3">
                         <span class="font-bold ${p.paid ? 'text-stone-400' : 'text-stone-900'}">${formatCurrency(p.value)}</span>
-                        <button onclick="deletePrevisto(${p.id})" class="text-stone-300 hover:text-red-500 font-black">&times;</button>
+                        <div class="flex flex-col items-center ml-2">
+                            <button onclick="editPrevisto(${p.id})" class="text-blue-400 hover:text-blue-600 text-xs mb-1">✏️</button>
+                            <button onclick="deletePrevisto(${p.id})" class="text-stone-300 hover:text-red-500 font-black">&times;</button>
+                        </div>
                     </div>
                 `;
                 previstoListEl.appendChild(div);
             });
         }
 
-        // ATUALIZAR RESUMO (DASHBOARD)
+        // --- DASHBOARD DE RESULTADOS ---
         const saldoAnterior = getCumulativePreviousBalance(monthFilter.value);
         resumoSaldoAnterior.textContent = formatCurrency(saldoAnterior);
         resumoSaldoAnterior.className = `font-black ${saldoAnterior >= 0 ? 'text-green-300' : 'text-red-400'}`;
 
         resumoRendaRecebida.textContent = formatCurrency(totalRendaRecebida);
+        resumoBartender.textContent = formatCurrency(totalBartenderRecebido);
         resumoAportes.textContent = formatCurrency(totalAportesPagos);
         resumoPagas.textContent = formatCurrency(totalContasPagasValor);
         resumoDespesas.textContent = formatCurrency(totalDespesas);
         resumoPrevistos.textContent = formatCurrency(totalPrevistosPendentes);
 
-        const totalEntrou = totalRendaRecebida + totalAportesPagos;
+        // Renderiza sub-lista de categorias
+        resumoCategorias.innerHTML = '';
+        Object.entries(totaisPorCategoria)
+            .sort(([, a], [, b]) => b - a)
+            .forEach(([cat, valor]) => {
+                const emoji = cat.split(' ')[0] || '';
+                const catName = cat.substring(emoji.length).trim() || cat;
+                const div = document.createElement('div');
+                div.className = "flex justify-between items-center text-[10px]";
+                div.innerHTML = `
+                    <span class="text-stone-400">${catName}</span>
+                    <span class="font-bold text-orange-300">${formatCurrency(valor)}</span>
+                `;
+                resumoCategorias.appendChild(div);
+            });
+
+        const totalEntrou = totalRendaRecebida + totalBartenderRecebido + totalAportesPagos;
         const totalSaiu = totalContasPagasValor + totalDespesas + totalPrevistosPagos;
 
         const sobraRealMes = totalEntrou - totalSaiu;
@@ -566,141 +702,282 @@ document.addEventListener('DOMContentLoaded', () => {
         projecaoDisplay.classList.remove('text-white', 'text-red-400');
         projecaoDisplay.classList.add(projecaoFinal >= 0 ? 'text-white' : 'text-red-400');
 
-        // Texts buttons
+        // Textos dos botões de ordenação
         document.getElementById('btn-sort-rendas').innerHTML = sorts.rendas === 'status' ? '<span>P</span> Pendentes' : '<span>$</span> Valor';
+        document.getElementById('btn-sort-bartender').innerHTML = sorts.bartender === 'status' ? '<span>P</span> Pendentes' : '<span>$</span> Valor';
         document.getElementById('btn-sort-aportes').innerHTML = sorts.aportes === 'status' ? '<span>P</span> Pendentes' : '<span>$</span> Valor';
         document.getElementById('btn-sort-contas').innerHTML = sorts.contas === 'status' ? '<span>P</span> Pendentes' : '<span>$</span> Valor';
-        document.getElementById('btn-sort-despesas').innerHTML = sorts.despesas === 'date' ? '<span>📅</span> Data' : '<span>$</span> Valor';
+        document.getElementById('btn-sort-despesas').innerHTML = sorts.despesas === 'date' ? '<span>📅</span> Data/Hora' : '<span>$</span> Valor';
     }
 
-    // EVENTOS DOS FORMULÁRIOS
+    // --- FUNÇÕES DE SUBMIT E EDIÇÃO ---
+
+    // Função Genérica para Resetar Botão de Edição
+    const resetEditButton = (btnId, defaultText, colorClass) => {
+        const btn = document.getElementById(btnId);
+        btn.textContent = defaultText;
+        btn.className = `w-full ${colorClass} text-white font-black py-2 px-6 rounded-xl transition mt-2 lg:mt-0 lg:w-auto`;
+    };
+
+    // Renda Trancista
     rendaForm.onsubmit = (e) => {
         e.preventDefault();
         const data = loadData();
-        data.rendas.push({ id: Date.now(), name: rendaNameInput.value, value: parseValue(rendaValueInput.value), paid: false });
+        if (editing.rendas) {
+            const index = data.rendas.findIndex(x => x.id === editing.rendas);
+            if (index > -1) {
+                data.rendas[index].name = rendaNameInput.value;
+                data.rendas[index].value = parseValue(rendaValueInput.value);
+            }
+            editing.rendas = null;
+            resetEditButton('btn-submit-renda', '+', 'bg-green-600 hover:bg-green-700');
+        } else {
+            data.rendas.push({ id: Date.now(), name: rendaNameInput.value, value: parseValue(rendaValueInput.value), paid: false });
+        }
         saveData(data);
         rendaForm.reset();
         updateUI();
     };
 
-    window.toggleRenda = (id) => {
+    window.editRenda = (id) => {
         const data = loadData();
-        const r = data.rendas.find(x => x.id === id);
-        if (r) r.paid = !r.paid;
+        const item = data.rendas.find(x => x.id === id);
+        if (item) {
+            rendaNameInput.value = item.name;
+            setCurrencyInputValue(rendaValueInput, item.value);
+            editing.rendas = id;
+            const btn = document.getElementById('btn-submit-renda');
+            btn.textContent = 'Salvar';
+            btn.className = 'bg-blue-500 hover:bg-blue-600 text-white font-black py-2 px-6 rounded-xl transition';
+            rendaNameInput.focus();
+        }
+    };
+    window.toggleRenda = (id) => { const d=loadData(); const x=d.rendas.find(i=>i.id===id); if(x) x.paid=!x.paid; saveData(d); updateUI(); };
+    window.deleteRenda = (id) => { const d=loadData(); d.rendas=d.rendas.filter(i=>i.id!==id); saveData(d); updateUI(); };
+
+    // Renda Bartender
+    bartenderForm.onsubmit = (e) => {
+        e.preventDefault();
+        const data = loadData();
+        if (editing.bartender) {
+            const index = data.bartender.findIndex(x => x.id === editing.bartender);
+            if (index > -1) {
+                data.bartender[index].name = bartenderNameInput.value;
+                data.bartender[index].value = parseValue(bartenderValueInput.value);
+            }
+            editing.bartender = null;
+            resetEditButton('btn-submit-bartender', '+', 'bg-emerald-500 hover:bg-emerald-600');
+        } else {
+            data.bartender.push({ id: Date.now(), name: bartenderNameInput.value, value: parseValue(bartenderValueInput.value), paid: false });
+        }
         saveData(data);
+        bartenderForm.reset();
         updateUI();
     };
 
-    window.deleteRenda = (id) => {
+    window.editBartender = (id) => {
         const data = loadData();
-        data.rendas = data.rendas.filter(x => x.id !== id);
-        saveData(data);
-        updateUI();
+        const item = data.bartender.find(x => x.id === id);
+        if (item) {
+            bartenderNameInput.value = item.name;
+            setCurrencyInputValue(bartenderValueInput, item.value);
+            editing.bartender = id;
+            const btn = document.getElementById('btn-submit-bartender');
+            btn.textContent = 'Salvar';
+            btn.className = 'bg-blue-500 hover:bg-blue-600 text-white font-black py-2 px-6 rounded-xl transition';
+            bartenderNameInput.focus();
+        }
     };
+    window.toggleBartender = (id) => { const d=loadData(); const x=d.bartender.find(i=>i.id===id); if(x) x.paid=!x.paid; saveData(d); updateUI(); };
+    window.deleteBartender = (id) => { const d=loadData(); d.bartender=d.bartender.filter(i=>i.id!==id); saveData(d); updateUI(); };
 
+    // Aportes (A Receber)
     aporteForm.onsubmit = (e) => {
         e.preventDefault();
         const data = loadData();
-        data.aportes.push({ id: Date.now(), name: aporteNameInput.value, value: parseValue(aporteValueInput.value), paid: false });
+        if (editing.aportes) {
+            const index = data.aportes.findIndex(x => x.id === editing.aportes);
+            if (index > -1) {
+                data.aportes[index].name = aporteNameInput.value;
+                data.aportes[index].value = parseValue(aporteValueInput.value);
+            }
+            editing.aportes = null;
+            resetEditButton('btn-submit-aporte', '+', 'bg-teal-600 hover:bg-teal-700');
+        } else {
+            data.aportes.push({ id: Date.now(), name: aporteNameInput.value, value: parseValue(aporteValueInput.value), paid: false });
+        }
         saveData(data);
         aporteForm.reset();
         updateUI();
     };
 
-    window.toggleAporte = (id) => {
+    window.editAporte = (id) => {
         const data = loadData();
-        const a = data.aportes.find(a => a.id === id);
-        if (a) a.paid = !a.paid;
-        saveData(data);
-        updateUI();
+        const item = data.aportes.find(x => x.id === id);
+        if (item) {
+            aporteNameInput.value = item.name;
+            setCurrencyInputValue(aporteValueInput, item.value);
+            editing.aportes = id;
+            const btn = document.getElementById('btn-submit-aporte');
+            btn.textContent = 'Salvar';
+            btn.className = 'bg-blue-500 hover:bg-blue-600 text-white font-black py-2 px-6 rounded-xl transition';
+            aporteNameInput.focus();
+        }
     };
+    window.toggleAporte = (id) => { const d=loadData(); const x=d.aportes.find(i=>i.id===id); if(x) x.paid=!x.paid; saveData(d); updateUI(); };
+    window.deleteAporte = (id) => { const d=loadData(); d.aportes=d.aportes.filter(i=>i.id!==id); saveData(d); updateUI(); };
 
-    window.deleteAporte = (id) => {
-        const data = loadData();
-        data.aportes = data.aportes.filter(a => a.id !== id);
-        saveData(data);
-        updateUI();
-    };
-
-    expenseForm.onsubmit = (e) => {
-        e.preventDefault();
-        const data = loadData();
-        data.despesas.push({
-            id: Date.now(),
-            desc: expenseDescInput.value,
-            value: parseValue(expenseValueInput.value),
-            date: expenseDateInput.value
-        });
-        saveData(data);
-        expenseDescInput.value = '';
-        expenseValueInput.value = '';
-        updateUI();
-    };
-
-    window.deleteExpense = (id) => {
-        const data = loadData();
-        data.despesas = data.despesas.filter(d => d.id !== id);
-        saveData(data);
-        updateUI();
-    };
-
+    // Contas Fixas
     billForm.onsubmit = (e) => {
         e.preventDefault();
         const data = loadData();
-        data.contas.push({ id: Date.now(), name: billNameInput.value, value: parseValue(billValueInput.value), paid: false });
+        if (editing.contas) {
+            const index = data.contas.findIndex(x => x.id === editing.contas);
+            if (index > -1) {
+                data.contas[index].name = billNameInput.value;
+                data.contas[index].value = parseValue(billValueInput.value);
+            }
+            editing.contas = null;
+            resetEditButton('btn-submit-bill', '+', 'bg-rose-500 hover:bg-rose-600');
+        } else {
+            data.contas.push({ id: Date.now(), name: billNameInput.value, value: parseValue(billValueInput.value), paid: false });
+        }
         saveData(data);
         billForm.reset();
         updateUI();
     };
 
-    window.toggleBill = (id) => {
+    window.editBill = (id) => {
         const data = loadData();
-        const b = data.contas.find(c => c.id === id);
-        if (b) b.paid = !b.paid;
+        const item = data.contas.find(x => x.id === id);
+        if (item) {
+            billNameInput.value = item.name;
+            setCurrencyInputValue(billValueInput, item.value);
+            editing.contas = id;
+            const btn = document.getElementById('btn-submit-bill');
+            btn.textContent = 'Salvar';
+            btn.className = 'bg-blue-500 hover:bg-blue-600 text-white font-black py-2 px-6 rounded-xl transition';
+            billNameInput.focus();
+        }
+    };
+    window.toggleBill = (id) => { const d=loadData(); const x=d.contas.find(i=>i.id===id); if(x) x.paid=!x.paid; saveData(d); updateUI(); };
+    window.deleteBill = (id) => { const d=loadData(); d.contas=d.contas.filter(i=>i.id!==id); saveData(d); updateUI(); };
+
+    // Despesas Variáveis
+    expenseForm.onsubmit = (e) => {
+        e.preventDefault();
+        const data = loadData();
+        if (editing.despesas) {
+            const index = data.despesas.findIndex(x => x.id === editing.despesas);
+            if (index > -1) {
+                data.despesas[index].desc = expenseDescInput.value;
+                data.despesas[index].category = expenseCategoryInput.value;
+                data.despesas[index].value = parseValue(expenseValueInput.value);
+                data.despesas[index].date = expenseDateInput.value;
+            }
+            editing.despesas = null;
+            resetEditButton('btn-submit-expense', 'Registrar no Caixa', 'w-full bg-orange-500 hover:bg-orange-600 shadow-md shadow-orange-200');
+        } else {
+            data.despesas.push({
+                id: Date.now(),
+                desc: expenseDescInput.value,
+                category: expenseCategoryInput.value,
+                value: parseValue(expenseValueInput.value),
+                date: expenseDateInput.value
+            });
+        }
         saveData(data);
+        expenseForm.reset();
+        expenseDateInput.value = new Date().toISOString().split('T')[0];
         updateUI();
     };
 
-    window.deleteBill = (id) => {
+    window.editExpense = (id) => {
         const data = loadData();
-        data.contas = data.contas.filter(c => c.id !== id);
-        saveData(data);
-        updateUI();
+        const item = data.despesas.find(x => x.id === id);
+        if (item) {
+            expenseDescInput.value = item.desc;
+            expenseCategoryInput.value = item.category || "";
+            setCurrencyInputValue(expenseValueInput, item.value);
+            expenseDateInput.value = item.date;
+            editing.despesas = id;
+            
+            const btn = document.getElementById('btn-submit-expense');
+            btn.textContent = 'Salvar Edição';
+            btn.className = 'w-full bg-blue-500 text-white font-black py-3 px-4 rounded-xl hover:bg-blue-600 transition shadow-md shadow-blue-200';
+            expenseForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            expenseDescInput.focus();
+        }
     };
+    window.deleteExpense = (id) => { const d=loadData(); d.despesas=d.despesas.filter(i=>i.id!==id); saveData(d); updateUI(); };
 
+    // Previstos
     previstoForm.onsubmit = (e) => {
         e.preventDefault();
         const data = loadData();
-        data.previstos.push({ id: Date.now(), name: previstoNameInput.value, value: parseValue(previstoValueInput.value), paid: false });
+        if (editing.previstos) {
+            const index = data.previstos.findIndex(x => x.id === editing.previstos);
+            if (index > -1) {
+                data.previstos[index].name = previstoNameInput.value;
+                data.previstos[index].value = parseValue(previstoValueInput.value);
+            }
+            editing.previstos = null;
+            resetEditButton('btn-submit-previsto', '+', 'bg-amber-500 hover:bg-amber-600');
+        } else {
+            data.previstos.push({ id: Date.now(), name: previstoNameInput.value, value: parseValue(previstoValueInput.value), paid: false });
+        }
         saveData(data);
         previstoForm.reset();
         updateUI();
     };
 
-    window.togglePrevisto = (id) => {
+    window.editPrevisto = (id) => {
         const data = loadData();
-        const p = data.previstos.find(x => x.id === id);
-        if (p) p.paid = !p.paid;
-        saveData(data);
-        updateUI();
+        const item = data.previstos.find(x => x.id === id);
+        if (item) {
+            previstoNameInput.value = item.name;
+            setCurrencyInputValue(previstoValueInput, item.value);
+            editing.previstos = id;
+            const btn = document.getElementById('btn-submit-previsto');
+            btn.textContent = 'Salvar';
+            btn.className = 'bg-blue-500 hover:bg-blue-600 text-white font-black py-2 px-6 rounded-xl transition';
+            previstoNameInput.focus();
+        }
     };
+    window.togglePrevisto = (id) => { const d=loadData(); const x=d.previstos.find(i=>i.id===id); if(x) x.paid=!x.paid; saveData(d); updateUI(); };
+    window.deletePrevisto = (id) => { const d=loadData(); d.previstos=d.previstos.filter(i=>i.id!==id); saveData(d); updateUI(); };
 
-    window.deletePrevisto = (id) => {
-        const data = loadData();
-        data.previstos = data.previstos.filter(p => p.id !== id);
-        saveData(data);
-        updateUI();
-    };
-
-    // CALCULADORA
+    // --- CALCULADORA (COM SUPORTE TECLADO REVISADO) ---
     window.toggleCalc = () => { document.getElementById('calc-widget').classList.toggle('hidden'); };
     let calcExpression = "0";
     const display = document.getElementById('calc-display');
+    
     window.calcNum = (n) => { calcExpression = calcExpression === "0" ? n : calcExpression + n; display.value = calcExpression; };
     window.calcOp = (op) => { if (!['+', '-', '*', '/'].includes(calcExpression.slice(-1))) calcExpression += op; display.value = calcExpression; };
     window.calcClear = () => { calcExpression = "0"; display.value = "0"; };
     window.calcDelete = () => { calcExpression = calcExpression.slice(0, -1) || "0"; display.value = calcExpression; };
     window.calcEqual = () => { try { calcExpression = eval(calcExpression).toString(); display.value = calcExpression; } catch { display.value = "Erro"; calcExpression = "0"; } };
+
+    // Escutador Global do Teclado para Calculadora
+    document.addEventListener('keydown', (e) => {
+        const calcWidget = document.getElementById('calc-widget');
+        if (calcWidget.classList.contains('hidden')) return; // Só funciona se estiver aberta
+
+        const key = e.key;
+        
+        if (/[0-9\.]/.test(key)) {
+            calcNum(key);
+        } else if (['+', '-', '*', '/'].includes(key)) {
+            calcOp(key);
+        } else if (key === 'Enter' || key === '=') {
+            e.preventDefault(); // Evita dar submit em algum form por acidente
+            calcEqual();
+        } else if (key === 'Backspace') {
+            calcDelete();
+        } else if (key === 'Escape' || key.toLowerCase() === 'c') {
+            calcClear();
+        }
+    });
 
     // BACKUP
     window.exportData = () => {
@@ -711,9 +988,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const a = document.createElement('a'); a.href = url; a.download = `anna_pessoal_backup_${month}.json`; a.click();
     };
 
+    // INÍCIO
     monthFilter.onchange = updateUI;
-
-    // Início
     const today = new Date();
     monthFilter.value = today.toISOString().substring(0, 7);
     expenseDateInput.value = today.toISOString().split('T')[0];
